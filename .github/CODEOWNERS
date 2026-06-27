@@ -1,0 +1,9 @@
+# Default review owners for this public-safe collaboration repo.
+
+* @raylee-hawkins
+
+# Candidate detection content should receive explicit review before merge.
+
+detections/ @raylee-hawkins
+validation/ @raylee-hawkins
+docs/ @raylee-hawkins

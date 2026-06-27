@@ -1,0 +1,31 @@
+# Exclude raw telemetry, local captures, and environment-specific artifacts to
+# reduce accidental publication from this public collaboration repository.
+*.evtx
+*.pcap
+*.pcapng
+*.etl
+*.dmp
+*.dump
+*.log
+*.csv
+*.jsonl
+*.sqlite
+*.db
+*.zip
+*.7z
+*.tar
+*.gz
+*.tgz
+
+evidence/raw/
+captures/
+logs/
+tmp/
+.local/
+
+# Exclude secrets, credentials, keys, and local environment files.
+.env
+.env.*
+secrets.*
+*.key
+*.pem
