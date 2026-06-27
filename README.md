@@ -33,3 +33,6 @@ No private, customer, or sensitive data belongs in this repository.
 
 Awaiting first ATT&CK / Atomic candidate from collaborator.
 
+## License
+
+This project is licensed under the MIT License.
