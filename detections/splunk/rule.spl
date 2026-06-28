@@ -1,7 +1,29 @@
-# Pending collaborator-provided Atomic Red Team candidate and telemetry context.
+# Title: Encoded PowerShell Process Creation with Sysmon EID 3 Correlation Shape
+# Technique: T1059.001 - PowerShell / T1071.001 - Application Layer Protocol
+# Contributor: Raylee Hawkins
+# Status: Draft only
+# Validation: Repository-local validation is pending.
 #
-# Placeholder only.
-# Do not add SPL query logic, sourcetype assumptions, EventCode values,
-# false positives, severity, or validation claims until the candidate
-# and telemetry context are provided.
+# Public-safety boundary:
+# - Replace placeholder index and sourcetype values with local mappings before use.
+# - Do not treat this draft as production-ready or validated.
+# - This draft intentionally avoids lab IPs, real index names, and environment names.
 
+index=<windows_sysmon_index> sourcetype=<sysmon_sourcetype> EventCode=1
+    (Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
+    (CommandLine="* -EncodedCommand *" OR CommandLine="* -enc *" OR CommandLine="* -ec *")
+    NOT (CommandLine="*MicrosoftEdge*" OR CommandLine="*SenseIR*" OR CommandLine="*IntelliJ*")
+| eval process_match_time=_time
+| table process_match_time host user Image CommandLine ParentImage ProcessGuid
+| eval tier="investigate", correlation_status="process_creation_only"
+| appendpipe [
+    join type=inner ProcessGuid [
+        search index=<windows_sysmon_index> sourcetype=<sysmon_sourcetype> EventCode=3
+        | rename _time as network_match_time
+        | table ProcessGuid network_match_time DestinationHostname DestinationIp DestinationPort Protocol
+    ]
+    | where network_match_time >= process_match_time AND network_match_time <= process_match_time + 300
+    | eval tier="signal_candidate", correlation_status="process_creation_and_network"
+]
+| sort 0 ProcessGuid process_match_time tier
+| fields process_match_time network_match_time host user Image CommandLine ParentImage ProcessGuid DestinationHostname DestinationIp DestinationPort Protocol tier correlation_status

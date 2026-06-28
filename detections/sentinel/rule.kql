@@ -4,9 +4,11 @@
 // Date: 2026-06-28
 // Status: Experimental
 // Translation source: Sigma rule detections/T1059.001/rule.yml
-// Validated against: Atomic Red Team T1059.001 corpus (Sysmon EID 1 + EID 3)
-// Translation note: Sentinel KQL targets Sysmon via SecurityEvent or SysmonEvent
-// table depending on connector configuration. Field names follow Sysmon schema.
+// Scope: Process-creation translation only; EID 3 correlation is not implemented here.
+// Validation: Live Sentinel validation is pending in this repository.
+// Translation note: Sentinel table naming is connector-dependent. This draft uses
+// SysmonEvent, while some environments ingest Sysmon through SecurityEvent.
+// Field names follow Sysmon schema and may require connector-specific mapping.
 
 SysmonEvent
 | where EventID == 1
