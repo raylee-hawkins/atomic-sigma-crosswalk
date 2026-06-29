@@ -25,8 +25,15 @@ To be documented by Raylee after SPL build and tuning.
 ### Sentinel KQL
 SysmonEvent table name may vary depending on connector configuration.
 Some environments ingest Sysmon via SecurityEvent table instead.
-KQL translation is untested against a live Sentinel instance.
-Pending validation when lab access is available.
+
+Performance gap: Original translation used endswith and contains chained with or operators. Replaced with has_any() following peer review.
+has_any() is vectorized and significantly more efficient at enterprise scale.
+
+Fidelity gap: Standalone EID 1 match on encoded PowerShell is low fidelity in isolation. Encoded PowerShell fires frequently from legitimate tooling in enterprise environments. The three-item filter list is insufficient to suppress noise at scale without the EID 3 network correlation anchor.
+Full signal confidence requires a corresponding Sysmon EID 3 network connection event sharing the same ProcessGuid within 300 seconds.
+Standalone EID 1 match is INVESTIGATE tier only.
+
+KQL translation peer reviewed externally. Live Sentinel validation pending workspace access.
 
 ## Validation Status
 
