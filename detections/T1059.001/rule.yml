@@ -1,0 +1,60 @@
+title: Encoded PowerShell Execution with Outbound C2 Beacon
+id: 7f3a9c2e-1b4d-4e8f-a6c0-9d2e5f7b3a1c
+status: experimental
+description: >
+    Detects the process-creation side of encoded PowerShell execution.
+    Higher-confidence candidate handling expects correlation with a
+    corresponding Sysmon EID 3 outbound network connection sharing the
+    same ProcessGuid within 300 seconds. Repository-local validation is
+    pending; collaborator reports prior validation in a controlled Atomic
+    Red Team lab corpus.
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+    - https://attack.mitre.org/techniques/T1071/001/
+    - https://github.com/Bobby-Okafor/DetectionLab
+author: Bobby Okafor
+date: 2026/06/28
+tags:
+    - attack.execution
+    - attack.t1059.001
+    - attack.command-and-control
+    - attack.t1071.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_process:
+        EventID: 1
+        Image|endswith:
+            - '\powershell.exe'
+            - '\pwsh.exe'
+        CommandLine|contains:
+            - ' -EncodedCommand '
+            - ' -enc '
+            - ' -ec '
+    filter_legitimate:
+        CommandLine|contains:
+            - 'MicrosoftEdge'
+            - 'SenseIR'
+            - 'IntelliJ'
+    condition: selection_process and not filter_legitimate
+falsepositives:
+    - Legitimate administrative scripts using encoded commands
+    - Software deployment tools using encoded PowerShell
+    - SCCM and endpoint management platforms
+level: high
+fields:
+    - ProcessGuid
+    - CommandLine
+    - ParentImage
+    - User
+    - Host
+notes: >
+    This rule covers the process creation side of the correlation.
+    Full signal confidence requires a corresponding Sysmon EID 3
+    network connection event sharing the same ProcessGuid within
+    300 seconds. A standalone EID 1 match is classified as
+    INVESTIGATE tier, not SIGNAL tier, in the Signal Proof pipeline.
+    Repository-local validation remains pending. Translation notes
+    comparing Splunk SPL and Sentinel KQL field mapping gaps are
+    documented in notes.md.

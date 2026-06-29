@@ -1,7 +1,25 @@
-// Pending collaborator-provided Atomic Red Team candidate and telemetry context.
-//
-// Placeholder only.
-// Do not add KQL query logic, table assumptions, EventCode values,
-// false positives, severity, or validation claims until the candidate
-// and telemetry context are provided.
+// Title: Encoded PowerShell Execution with Outbound C2 Beacon
+// Technique: T1059.001 - PowerShell / T1071.001 - Application Layer Protocol
+// Author: Bobby Okafor
+// Date: 2026-06-28
+// Status: Experimental
+// Translation source: Sigma rule detections/T1059.001/rule.yml
+// Validated against: Atomic Red Team T1059.001 corpus (Sysmon EID 1 + EID 3)
+// Translation note: Sysmon may be ingested via SecurityEvent table in some environments
+// Performance note: has_any() used over endswith/contains chains for query efficiency
+// Fidelity note: Standalone EID 1 match is low confidence. Full signal requires
+// EID 3 network connection sharing the same ProcessGuid within 300 seconds.
 
+SysmonEvent
+| where EventID == 1
+| where Image has_any ("powershell.exe", "pwsh.exe")
+| where CommandLine has_any ("-EncodedCommand", "-enc", "-ec")
+| where CommandLine !has_any ("MicrosoftEdge", "SenseIR", "IntelliJ")
+| project
+    TimeGenerated,
+    ProcessGuid,
+    Image,
+    CommandLine,
+    ParentImage,
+    User,
+    Computer
