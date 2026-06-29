@@ -30,8 +30,7 @@ Raylee drafted an initial SPL translation with:
 
 Repository-local Splunk validation is pending.
 
-### Sentinel KQL
-<<<<<<< HEAD
+### Sentinel KQ
 SysmonEvent table name may vary depending on connector configuration.
 Some environments ingest Sysmon via SecurityEvent table instead.
 
@@ -43,13 +42,6 @@ Full signal confidence requires a corresponding Sysmon EID 3 network connection 
 Standalone EID 1 match is INVESTIGATE tier only.
 
 KQL translation peer reviewed externally. Live Sentinel validation pending workspace access.
-=======
-Bobby drafted the Sentinel KQL process-creation translation. SysmonEvent
-table naming may vary depending on connector configuration; some
-environments ingest Sysmon through SecurityEvent instead. The current KQL
-does not implement the full EID 3 correlation. Live Sentinel validation is
-pending unless repo evidence is added later.
->>>>>>> 2368ab4e380bc0bef063aa05ac4fb5e9bed57b94
 
 ## Validation Status
 
@@ -60,3 +52,4 @@ pending unless repo evidence is added later.
 | Raylee Splunk SPL | Drafted; validation pending |
 | EID 3 correlation | Represented in candidate correlation notes and Splunk draft; validation pending |
 | Public-safe claim | Draft cross-platform translation artifacts exist; validation is not complete |
+<!-- Notes last reviewed: 2026-06-29 -->
